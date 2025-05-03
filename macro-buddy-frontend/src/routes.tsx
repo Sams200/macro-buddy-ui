@@ -10,45 +10,65 @@ import Diary from './pages/Diary';
 import FoodDatabase from './pages/FoodDatabase';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
+import {useAuth} from "./hooks/useAuth";
+import Chat from "./pages/Chat";
 
-// Implement PrivateRoute component
+
 const PrivateRouteComponent: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return <PrivateRoute>{children}</PrivateRoute>;
 };
 
 const AppRoutes: React.FC = () => {
     return (
-        <BrowserRouter>
-            <AuthProvider>
-                <Routes>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
+        <AuthProvider>
+            <BrowserRouter>
+                <AppRoutesContent />
+            </BrowserRouter>
+        </AuthProvider>
+    );
+};
 
-                    <Route path="/dashboard" element={
-                        <PrivateRouteComponent>
-                            <Dashboard />
-                        </PrivateRouteComponent>
-                    } />
+const AppRoutesContent: React.FC = () => {
+    const { user } = useAuth();
+    const isAdmin = user?.isAdmin || false;
 
-                    <Route path="/diary" element={
-                        <PrivateRouteComponent>
-                            <Diary />
-                        </PrivateRouteComponent>
-                    } />
+    return (
+        <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-                    <Route path="/foods" element={<FoodDatabase />} />
+            <Route path="/dashboard" element={
+                <PrivateRouteComponent>
+                    <Dashboard />
+                </PrivateRouteComponent>
+            } />
 
-                    <Route path="/settings" element={
-                        <PrivateRouteComponent>
-                            <Settings />
-                        </PrivateRouteComponent>
-                    } />
+            <Route path="/diary" element={
+                <PrivateRouteComponent>
+                    <Diary />
+                </PrivateRouteComponent>
+            } />
 
-                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
-            </AuthProvider>
-        </BrowserRouter>
+            <Route path="/foods" element={<FoodDatabase />} />
+
+            <Route path="/settings" element={
+                <PrivateRouteComponent>
+                    <Settings />
+                </PrivateRouteComponent>
+            } />
+
+            <Route path="/chat" element={
+                isAdmin ?
+                    <PrivateRouteComponent>
+                        <Chat />
+                    </PrivateRouteComponent>
+                    :
+                    <Navigate to="/dashboard" replace />
+            } />
+
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<NotFound />} />
+        </Routes>
     );
 };
 

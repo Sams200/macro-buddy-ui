@@ -16,6 +16,7 @@ interface DailyEntriesProps {
         dailyProteinGoal: number;
         dailyFatGoal: number;
         dailyCarbGoal: number;
+        dailyWaterGoal: number;
     };
 }
 

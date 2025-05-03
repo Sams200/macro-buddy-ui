@@ -7,6 +7,8 @@ const Header: React.FC = () => {
     const { isAuthenticated, user, signOut } = useAuth();
     const navigate = useNavigate();
 
+    const isAdmin = user?.isAdmin || false;
+
     const handleSignOut = async () => {
         await signOut();
         navigate('/login');
@@ -43,6 +45,16 @@ const Header: React.FC = () => {
                                     >
                                         Food Database
                                     </Link>
+
+                                    {isAdmin && (
+                                        <Link
+                                        to="/chat"
+                                        className="border-transparent text-[#CCD5AE] hover:border-[#D4A373] hover:text-[#D4A373] inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                                        >
+                                        Admin Chat
+                                        </Link>
+                                    )}
+
                                     <Link
                                         to="/settings"
                                         className="border-transparent text-[#CCD5AE] hover:border-[#D4A373] hover:text-[#D4A373] inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"

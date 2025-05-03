@@ -12,6 +12,7 @@ const UserSettingsForm: React.FC = () => {
         goalProtein: 0,
         goalFat: 0,
         goalCarbs: 0,
+        goalWater: 0,
     });
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -31,6 +32,7 @@ const UserSettingsForm: React.FC = () => {
                     goalProtein: userSettings.dailyProteinGoal,
                     goalFat: userSettings.dailyFatGoal,
                     goalCarbs: userSettings.dailyCarbGoal,
+                    goalWater: userSettings.dailyWaterGoal,
                 });
             } catch (error) {
                 const apiError = error as ApiError;
@@ -75,6 +77,10 @@ const UserSettingsForm: React.FC = () => {
 
         if (settings.goalCarbs < 0) {
             newErrors.goalCarbs = 'Carbs must be greater or equal to 0';
+        }
+
+        if (settings.goalWater < 0) {
+            newErrors.goalCarbs = 'Water must be greater or equal to 0';
         }
 
         setErrors(newErrors);
@@ -192,6 +198,20 @@ const UserSettingsForm: React.FC = () => {
                             placeholder="e.g., 250"
                             fullWidth
                             step="0.1"
+                            min="0"
+                        />
+
+                        <Input
+                            label="Daily Water Goal (ml)"
+                            type="number"
+                            id="goalWater"
+                            name="goalWater"
+                            value={settings.goalWater === 0 ? '' : settings.goalWater}
+                            onChange={handleChange}
+                            error={errors.goalCarbs}
+                            placeholder="e.g., 2500"
+                            fullWidth
+                            step="100"
                             min="0"
                         />
                     </div>

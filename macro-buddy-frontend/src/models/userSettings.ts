@@ -3,6 +3,7 @@ export interface UserSettings {
     dailyProteinGoal: number;
     dailyFatGoal: number;
     dailyCarbGoal: number;
+    dailyWaterGoal: number;
 }
 
 export interface UserSettingsRequest {
@@ -10,6 +11,7 @@ export interface UserSettingsRequest {
     goalProtein: number;
     goalFat: number;
     goalCarbs: number;
+    goalWater: number;
 }
 
 export interface UserSettingsResponse {
@@ -17,4 +19,5 @@ export interface UserSettingsResponse {
     dailyProteinGoal: number;
     dailyFatGoal: number;
     dailyCarbGoal: number;
+    dailyWaterGoal: number;
 }

@@ -5,6 +5,7 @@ import DailyEntries from '../components/entries/DailyEntries';
 import Button from '../components/common/Button';
 import { getUserSettings } from '../api/userSettingsApi';
 import { UserSettingsResponse } from '../models/userSettings';
+import DailyWater from "../components/water/DailyWater";
 
 const Diary: React.FC = () => {
     const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
@@ -70,6 +71,7 @@ const Diary: React.FC = () => {
                 </div>
 
                 <DailyEntries date={selectedDate} userSettings={userSettings || undefined} />
+                <DailyWater date={selectedDate} userSettings={userSettings || undefined} />
             </div>
         </Layout>
     );

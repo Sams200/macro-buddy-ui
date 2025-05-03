@@ -9,9 +9,13 @@ import { EntryResponse } from '../../models/entry';
 import { UserSettingsResponse } from '../../models/userSettings';
 import { ApiError } from '../../models/common';
 import {formatNumber} from "../../utils/numbers";
+import {WaterResponse} from "../../models/water";
+import {getWaterByDate} from "../../api/waterApi";
 
 const Dashboard: React.FC = () => {
     const [todayEntries, setTodayEntries] = useState<EntryResponse[]>([]);
+    const [todayWater, setTodayWater] = useState<WaterResponse | null>(null);
+
     const [weeklyData, setWeeklyData] = useState<any[]>([]);
     const [userSettings, setUserSettings] = useState<UserSettingsResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -29,6 +33,9 @@ const Dashboard: React.FC = () => {
                 // Fetch today's entries
                 const todayResult = await getEntriesByDate(today);
                 setTodayEntries(todayResult.content);
+
+                const todayWaterResult = await getWaterByDate(today);
+                setTodayWater(todayWaterResult);
 
                 // Fetch user settings
                 const settings = await getUserSettings();
@@ -202,12 +209,12 @@ const Dashboard: React.FC = () => {
                         </div>
                     </div>
 
-                    {userSettings && userSettings.dailyKcalGoal > 0 && (
+                    {userSettings && userSettings.dailyWaterGoal > 0 && (
                         <GoalProgress
-                            title="Today's Calorie Goal"
-                            consumed={todayTotals.calories}
-                            goal={userSettings.dailyKcalGoal}
-                            unit="kcal"
+                            title="Today's Water Goal"
+                            consumed={todayWater? todayWater.quantity : 0}
+                            goal={userSettings.dailyWaterGoal}
+                            unit="ml"
                             colorClass="bg-[#D4A373]"
                         />
                     )}
