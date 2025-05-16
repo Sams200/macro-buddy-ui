@@ -6,8 +6,11 @@ import {
     useConnectToPublicChatMutation, useDisconnectFromPublicChatMutation, useSendPublicChatMessageMutation
 } from '../../api/chatApi';
 import {SubmitHandler, useForm} from "react-hook-form";
+import {useAuth} from "../../hooks/useAuth";
 
 const Chat: React.FC = () => {
+    const { user } = useAuth();
+
     const [publicChatMessages, setPublicChatMessages] = useState<ChatMessageResponse[]>([]);
     const [socketError, setSocketError] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -89,9 +92,9 @@ const Chat: React.FC = () => {
                                 <div
                                     key={index}
                                     className={`p-3 rounded-lg ${
-                                        message.messageType === 'MESSAGE'
+                                        message.userId === user?.userId
                                             ? 'bg-blue-100 text-blue-800'
-                                            : 'bg-gray-100 text-gray-700 italic text-center text-sm'
+                                            : 'bg-gray-100 text-gray-700'
                                     }`}
                                 >
                                     {message.messageType === 'MESSAGE' ? (

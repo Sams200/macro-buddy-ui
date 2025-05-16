@@ -12,6 +12,7 @@ import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
 import {useAuth} from "./hooks/useAuth";
 import Chat from "./pages/Chat";
+import TDEE from "./pages/TDEE";
 
 
 const PrivateRouteComponent: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -65,6 +66,8 @@ const AppRoutesContent: React.FC = () => {
                     :
                     <Navigate to="/dashboard" replace />
             } />
+
+            <Route path="/tdee" element={<TDEE />} />
 
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="*" element={<NotFound />} />

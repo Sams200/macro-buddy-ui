@@ -5,6 +5,9 @@ import PasswordChangeForm from '../auth/PasswordChangeForm';
 import { UserSettingsRequest } from '../../models/userSettings';
 import { getUserSettings, updateUserSettings } from '../../api/userSettingsApi';
 import { ApiError } from '../../models/common';
+import {EntryResponse} from "../../models/entry";
+import {getEntries} from "../../api/entryApi";
+import {Food} from "../../models/food";
 
 const UserSettingsForm: React.FC = () => {
     const [settings, setSettings] = useState<UserSettingsRequest>({
@@ -16,6 +19,7 @@ const UserSettingsForm: React.FC = () => {
     });
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [isExporting, setIsExporting] = useState(false);
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -111,6 +115,102 @@ const UserSettingsForm: React.FC = () => {
         } finally {
             setIsSaving(false);
         }
+    };
+
+    const exportDataAsXml = async () => {
+        setIsExporting(true);
+        setError('');
+        setSuccessMessage('');
+
+        try{
+            let allEntries: EntryResponse[] = [];
+            let page = 0;
+            let hasMoreEntries = true;
+            const pageSize = 100;
+
+            while(hasMoreEntries){
+                const result = await getEntries(page, pageSize);
+                allEntries=[...allEntries, ...result.content];
+
+                if (result.totalPages>=page) {
+                    hasMoreEntries = false;
+                }
+                page++;
+            }
+
+            const uniqueFoods = new Map<number, Food>();
+            allEntries.forEach(entry => {
+                if (!uniqueFoods.has(entry.food.foodId)){
+                    uniqueFoods.set(entry.food.foodId, entry.food);
+                }
+            });
+
+            let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n';
+            xmlContent += '<export>\n';
+
+            xmlContent += '  <foods>\n';
+            uniqueFoods.forEach(food => {
+                xmlContent += '    <food>\n';
+                xmlContent += `      <foodId>${food.foodId}</foodId>\n`;
+                xmlContent += `      <name>${escapeXml(food.name)}</name>\n`;
+                xmlContent += `      <producer>${escapeXml(food.producer)}</producer>\n`;
+                xmlContent += `      <servingSize>${food.servingSize}</servingSize>\n`;
+                xmlContent += `      <servingUnits>${escapeXml(food.servingUnits)}</servingUnits>\n`;
+                xmlContent += `      <kcal>${food.kcal}</kcal>\n`;
+                xmlContent += `      <protein>${food.protein}</protein>\n`;
+                xmlContent += `      <fat>${food.fat}</fat>\n`;
+                xmlContent += `      <carbs>${food.carbs}</carbs>\n`;
+                xmlContent += '    </food>\n';
+            });
+            xmlContent += '  </foods>\n';
+
+            xmlContent += '  <entries>\n';
+            allEntries.forEach(entry => {
+                xmlContent += '    <entry>\n';
+                xmlContent += `      <entryId>${entry.entryId}</entryId>\n`;
+                xmlContent += `      <date>${entry.date}</date>\n`;
+                xmlContent += `      <meal>${escapeXml(entry.meal)}</meal>\n`;
+                xmlContent += `      <quantity>${entry.quantity}</quantity>\n`;
+                xmlContent += `      <foodId>${entry.food.foodId}</foodId>\n`;
+                xmlContent += '    </entry>\n';
+            });
+            xmlContent += '  </entries>\n';
+            xmlContent += '</export>';
+
+            const blob = new Blob([xmlContent], { type: 'application/xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            a.href = url;
+            a.download = `nutrition-data-export-${timestamp}.xml`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            setSuccessMessage('Data exported successfully');
+
+            setTimeout(()=> {
+                    setSuccessMessage('');
+                }, 3000
+            );
+        }
+        catch(error){
+            const apiError = error as ApiError;
+            setError(apiError.message || 'Failed to export data. Please try again');
+        }
+        finally {
+            setIsExporting(false);
+        }
+    };
+
+    const escapeXml = (unsafe: string): string => {
+        return unsafe
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&apos;');
     };
 
     if (isLoading) {
@@ -228,7 +328,26 @@ const UserSettingsForm: React.FC = () => {
                 </form>
             </div>
 
+            <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-xl font-semibold text-[#D4A373] mb-4">Export Data</h3>
+                <p className="text-gray-600 mb-4">
+                    Export all your nutrition entries and foods as an XML file.
+                </p>
+                <div className="flex justify-start">
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={exportDataAsXml}
+                        isLoading={isExporting}
+                    >
+                        {isExporting ? 'Exporting...' : 'Export Data as XML'}
+                    </Button>
+                </div>
+            </div>
+
             <PasswordChangeForm />
+
+
         </div>
     );
 };

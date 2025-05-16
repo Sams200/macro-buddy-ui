@@ -61,6 +61,13 @@ const Header: React.FC = () => {
                                     >
                                         Settings
                                     </Link>
+
+                                    <Link
+                                        to="/tdee"
+                                        className="border-transparent text-[#CCD5AE] hover:border-[#D4A373] hover:text-[#D4A373] inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                                    >
+                                        TDEE Calculator
+                                    </Link>
                                 </>
                             )}
                         </nav>

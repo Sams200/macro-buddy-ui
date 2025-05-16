@@ -54,7 +54,7 @@ const LoginForm: React.FC = () => {
         <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full mx-auto">
             <h2 className="text-2xl font-bold text-[#D4A373] mb-6 text-center">Sign In</h2>
 
-            {error && (
+            {error && error!=="An unexpected error occurred" && (
                 <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
                     {error}
                 </div>

@@ -191,6 +191,7 @@ const FoodForm: React.FC<FoodFormProps> = ({ onSuccess, onCancel }) => {
                         onChange={handleChange}
                         error={errors.servingSize}
                         placeholder="e.g. 100"
+                        min="0"
                         fullWidth
                         step="1"
                     />
@@ -216,6 +217,7 @@ const FoodForm: React.FC<FoodFormProps> = ({ onSuccess, onCancel }) => {
                         onChange={handleChange}
                         error={errors.kcal}
                         placeholder="e.g. 52"
+                        min="0"
                         fullWidth
                     />
 
@@ -230,6 +232,7 @@ const FoodForm: React.FC<FoodFormProps> = ({ onSuccess, onCancel }) => {
                         placeholder="e.g. 0.3"
                         fullWidth
                         step="0.1"
+                        min="0"
                     />
 
                     <Input
@@ -243,6 +246,7 @@ const FoodForm: React.FC<FoodFormProps> = ({ onSuccess, onCancel }) => {
                         placeholder="e.g. 0.2"
                         fullWidth
                         step="0.1"
+                        min="0"
                     />
 
                     <Input
@@ -256,6 +260,7 @@ const FoodForm: React.FC<FoodFormProps> = ({ onSuccess, onCancel }) => {
                         placeholder="e.g. 14"
                         fullWidth
                         step="0.1"
+                        min="0"
                     />
                 </div>
 
